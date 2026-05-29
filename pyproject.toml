@@ -4,7 +4,11 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "jinja2>=3.1.6",
+    "termcolor>=3.3.0",
+    "yaspin>=3.4.0",
+]
 
 [tool.pyrefly]
 project-includes = [
