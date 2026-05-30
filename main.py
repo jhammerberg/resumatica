@@ -11,12 +11,123 @@ spinner.start()
 import jinja2
 import argparse
 from pathlib import Path
+from dataclasses import dataclass, asdict
 import subprocess
+import yaml
+import re
 
+PROJECT_DIR = Path(__file__).parent
 DOCKER_IMAGE = "texlive/texlive:latest"
 
+@dataclass
+class Education:
+    school: str
+    location: str
+    degree: str
+    field_of_study: str
+    start_date: str
+    end_date: str
 
-def make_tex(template_path: Path, output_dir: Path, data: dict) -> Path:
+@dataclass
+class Position:
+    title: str
+    start_date: str
+    end_date: str
+    bullets: list[str]    
+
+@dataclass
+class Experience:
+    company: str
+    location: str
+    positions: list[Position]    
+
+@dataclass
+class Resume:
+    first_name: str
+    last_name: str
+    contact_info: list[str]
+
+    education: list[Education]
+    work_experience: list[Experience]
+    project_experience: list[Experience]
+    skills: dict[str, list[str]]
+
+def escape_latex(text: str) -> str:
+    """Escapes reserved LaTeX characters in a string."""
+    if not isinstance(text, str):
+        return text
+        
+    latex_replacements = {
+        '\\': r'\textbackslash{}',
+        '&': r'\&',
+        '%': r'\%',
+        '$': r'\$',
+        '#': r'\#',
+        '_': r'\_',
+        '{': r'\{',
+        '}': r'\}',
+        '~': r'\textasciitilde{}',
+        '^': r'\textasciicircum{}'
+    }
+    
+    # Use regex to replace characters efficiently without double-escaping
+    regex = re.compile('|'.join(re.escape(key) for key in latex_replacements.keys()))
+    return regex.sub(lambda match: latex_replacements[match.group(0)], text)
+
+def escape_latex_recursive(data):
+    """Recursively traverses dictionaries and lists to escape LaTeX characters in strings."""
+    if isinstance(data, str):
+        return escape_latex(data)
+    elif isinstance(data, list):
+        return [escape_latex_recursive(item) for item in data]
+    elif isinstance(data, dict):
+        return {key: escape_latex_recursive(value) for key, value in data.items()}
+    return data
+
+def load_resume_from_yaml(file_path: Path) -> Resume:
+    with open(file_path, 'r', encoding='utf-8') as file:
+        data = yaml.safe_load(file)
+        
+    # Recursively escape all strings in the parsed YAML dictionary
+    data = escape_latex_recursive(data)
+        
+    # Process Education
+    education_objects = [
+        Education(**edu) for edu in data.get('education', [])
+    ]
+    
+    # Process Work Experience
+    work_objects = []
+    for exp in data.get('work_experience', []):
+        positions = [Position(**pos) for pos in exp.get('positions', [])]
+        work_objects.append(Experience(
+            company=exp['company'],
+            location=exp['location'],
+            positions=positions
+        ))
+        
+    # Process Project Experience
+    project_objects = []
+    for exp in data.get('project_experience', []):
+        positions = [Position(**pos) for pos in exp.get('positions', [])]
+        project_objects.append(Experience(
+            company=exp['company'],
+            location=exp['location'],
+            positions=positions
+        ))
+        
+    # Construct final Resume object
+    return Resume(
+        first_name=data.get('first_name', ''),
+        last_name=data.get('last_name', ''),
+        contact_info=data.get('contact_info', []),
+        education=education_objects,
+        work_experience=work_objects,
+        project_experience=project_objects,
+        skills=data.get('skills', {})
+    )
+
+def make_tex(template_path: Path, output_dir: Path, resume: Resume) -> Path:
     tex_file_name = template_path.stem + ".tex"
     output_path = output_dir / tex_file_name
 
@@ -35,7 +146,7 @@ def make_tex(template_path: Path, output_dir: Path, data: dict) -> Path:
     )
 
     template = latex_jinja_env.get_template(str(template_path))
-    rendered_tex = template.render(data)
+    rendered_tex = template.render(asdict(resume))
 
     with open(output_path, "w") as f:
         f.write(rendered_tex)
@@ -62,6 +173,7 @@ def prepare_docker() -> None:
                 )
             )
             exit(1)
+            
         # Check if texlive image is available, if not pull it
         result = subprocess.run(
             ["docker", "images", "-q", DOCKER_IMAGE],
@@ -102,12 +214,12 @@ def compile_tex(tex_path: Path, output_dir: Path, docker: bool = True) -> None:
                     "run",
                     "--rm",
                     "-v",
-                    f"{output_dir.absolute()}:/workdir:z",
+                    f"{PROJECT_DIR}:/workdir:z",
                     DOCKER_IMAGE,
-                    "pdflatex",
+                    "xelatex",
                     "-output-directory",
-                    "/workdir",
-                    tex_path.name,
+                    Path("/workdir") / output_dir,
+                    (output_dir / tex_path.name),
                 ],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
@@ -146,11 +258,9 @@ def prase_cli_args() -> argparse.Namespace:
 
 def main() -> None:
     args = prase_cli_args()
-    # Make the output directory if it doesnt already exist
     args.output.mkdir(parents=True, exist_ok=True)
-
-    data = {}
-    tex_path = make_tex(args.template, args.output, data)
+    resume = load_resume_from_yaml(PROJECT_DIR / "resume.yaml")
+    tex_path = make_tex(args.template, args.output, resume)
     compile_tex(tex_path, args.output)
 
 

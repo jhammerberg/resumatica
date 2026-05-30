@@ -1,0 +1,82 @@
+first_name: "Jack"
+last_name: "Hammerberg"
+contact_info:
+  - "jackmh@umich.edu"
+  - "(517)-960-1210"
+  - "linkedin.com/in/jackmh"
+  - "github.com/jhammerberg"
+education:
+  - school: "University of Michigan"
+    location: "Ann Arbor, MI"
+    degree: "Bachelor of Science"
+    field_of_study: "Computer Engineering"
+    start_date: "August 2023"
+    end_date: "December 2027"
+work_experience:
+  - company: "Rocket Lab"
+    location: "Long Beach, CA"
+    positions:
+      - title: "Incoming Flight Software Intern"
+        start_date: "February 2026"
+        end_date: "August 2026"
+        bullets: []
+  - company: "NASA Jet Propulsion Laboratory"
+    location: "Pasadena, CA"
+    positions:
+      - title: "Flight Software & Avionics Intern - High Performance Space Compute"
+        start_date: "June 2025"
+        end_date: "August 2025"
+        bullets:
+          - "Developed a real-time control loop to demonstrate Time Sensitive Networking (TSN) integration with NASA's next-generation High Performance Space Compute (HPSC) platform."
+          - "Optimized Linux GPIO performance using a custom C driver with DMA access on Raspberry Pi, reducing latency from 200-500 µs to ~1 µs, enabling microsecond-level precision control."
+          - "Integrated gPTP (IEEE 802.1AS) on Microchip Gigabit switches to synchronize Linux endpoints to ~20 nanoseconds, enabling TSN demo traffic determinism across multiple nodes."
+          - "Wrote a custom frame handler using Python and OpenCV for Gigabit Ethernet cameras to allow for video playback under intense packet loss and network traffic."
+          - "Extensively documented all previously mentioned activities with AsciiDoc, Antora, and Markdown for engineers to reference when designing future missions to best utilize TSN technology."
+project_experience:
+  - company: "Michigan Aeronautical Science Association (MASA)"
+    location: "Ann Arbor, MI"
+    positions:
+      - title: "Flight Software & Avionics Firmware Lead"
+        start_date: "August 2023"
+        end_date: "January 2026"
+        bullets:
+          - "Wrote custom device drivers for reading IMUs, ADCs, barometers, pressure transducers, and thermocouples as well as multi-mode valve control using SPI, I2C, and the STM32 HAL API in C."
+          - "Implemented a custom telemetry and command packet encoding scheme over Ethernet using LWIP on STM microcontrollers, optimized for efficiency and overhead."
+          - "Author of our automated control sequence for the launch of our rocket, controlling over 25 different components simultaneously and handling multiple changing abort procedures, verified prior to launch with custom simulations."
+      - title: "Avionics Subteam Director"
+        start_date: "August 2023"
+        end_date: "May 2025"
+        bullets:
+          - "Responsible engineer (RE) for our vehicle's modular avionics stack made of entirely custom PCBs and software for 50Hz live telemetry from 250+ analog and DIO channels over 100Base-T Ethernet."
+          - "Created training and onboarding documentation for 20+ new members while collaborating with the Chief and Systems Engineers to establish project timelines, deadlines, and deliverables."
+          - "Provided support for ground equipment and flight hardware for every major testing campaign, including live debugging of National Instruments DAQ hardware during our latest successful hotfire."
+skills:
+  Software:
+    - "Embedded Firmware"
+    - "FreeRTOS"
+    - "Zephyr"
+    - "STM32"
+    - "MAX"
+    - "Communication Buses"
+    - "3D CAD"
+    - "Linux Programming"
+    - "Git"
+    - "Raspberry Pi"
+  Programming Languages:
+    - "C"
+    - "C++"
+    - "Python"
+    - "Go/Golang"
+    - "JavaScript"
+    - "HTML"
+    - "CSS"
+    - "Lua"
+  Hardware:
+    - "Microcontrollers"
+    - "I2C & SPI"
+    - "Circuit Prototyping"
+    - "Oscilloscope"
+    - "Logic Analyzer"
+    - "Multimeter"
+    - "Soldering"
+    - "3D Printing"

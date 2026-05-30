@@ -1,14 +1,87 @@
-\documentclass[11pt,letterpaper]{article} % Font size and paper type  
-\usepackage{graphicx} % Required for inserting images
-
-\title{Resume Refactor}
-\author{Jack Hammerberg}
-\date{May 2026}
+\documentclass{templates/classes/classic}
 
 \begin{document}
 
-\maketitle
+\begin{center}
+    {\titlefont\Huge\bfseries \VAR{first_name} \VAR{last_name}} \\ \vspace{5pt}
+    \BLOCK{ if contact_info is iterable }
+        \small 
+        \BLOCK{ for item in contact_info }
+            \VAR{item}
+            \BLOCK{ if not loop.last }
+                $\bullet$
+            \BLOCK{ endif }
+        \BLOCK{ endfor }
+    \BLOCK{ endif }
+\end{center}
 
-\section{Introduction}
+\section{EDUCATION}
+    \resumeSubHeadingListStart
+    \BLOCK{ if education is iterable }
+        \BLOCK{ for item in education }
+            \resumeSubheading
+                {\VAR{item.school}}{\VAR{item.location}}
+                {\VAR{item.degree} in \VAR{item.field_of_study}}{\VAR{item.start_date}\ - \VAR{item.end_date}}
+        \BLOCK{ endfor }
+    \BLOCK{ endif }
+    \resumeSubHeadingListEnd
 
+\section{WORK EXPERIENCE}
+    \resumeSubHeadingListStart
+    \BLOCK{ if work_experience is iterable }
+        \BLOCK{ for experience in work_experience }
+            \resumeSubheading
+                {\VAR{experience.company}}{\VAR{experience.location}}
+                \BLOCK{ for position in experience.positions }
+                    {\VAR{position.title}}{\VAR{position.start_date}\ - \VAR{position.end_date}}
+                    \BLOCK{ if position.bullets }
+                        \resumeItemListStart
+                        \BLOCK{ for bullet in position.bullets }
+                            \resumeItem{\VAR{bullet}}
+                        \BLOCK{ endfor }
+                        \resumeItemListEnd
+                    \BLOCK{ endif }
+                \BLOCK{ endfor }
+        \BLOCK{ endfor }
+    \BLOCK{ endif }
+    \resumeSubHeadingListEnd
+
+\section{RELEVANT EXPERIENCE}
+    \resumeSubHeadingListStart
+    \BLOCK{ if project_experience is iterable }
+        \BLOCK{ for experience in project_experience }
+            \BLOCK{ if loop.first }
+                \resumeSubheading
+            \BLOCK{ endif }
+                {\VAR{experience.company}}{\VAR{experience.location}}
+                    \BLOCK{ for position in experience.positions }
+                        \BLOCK{ if not loop.first }
+                            \resumeSubSubheading
+                        \BLOCK{ endif }
+                        {\VAR{position.title}}{\VAR{position.start_date}\ - \VAR{position.end_date}}
+                        \BLOCK{ if position.bullets }
+                            \resumeItemListStart
+                            \BLOCK{ for bullet in position.bullets }
+                                \resumeItem{\VAR{bullet}}
+                            \BLOCK{ endfor }
+                            \resumeItemListEnd
+                        \BLOCK{ endif }
+                        \BLOCK{ if not loop.last }
+                            \vspace{5pt}
+                        \BLOCK{ endif }
+                \BLOCK{ endfor }
+        \BLOCK{ endfor }
+    \BLOCK{ endif }
+    \resumeSubHeadingListEnd
+
+\section{SKILLS}
+     \begin{itemize}[leftmargin=0.15in, label={}]
+        \small{\item{
+            \BLOCK{ for category, skills in skills.items() }
+                \textbf{\VAR{category}}{: \BLOCK{ for skill in skills } \VAR{skill}, \BLOCK{ endfor } } \\
+                \vspace{2pt}
+            \BLOCK{ endfor }
+        }}
+    \end{itemize}
+    
 \end{document}
