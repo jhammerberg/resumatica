@@ -17,6 +17,8 @@ import yaml
 import re
 
 PROJECT_DIR = Path(__file__).parent
+DEFAULT_TEMPLATE = (PROJECT_DIR / "templates" / "classic.jinja")
+DEFAULT_RESUME = (PROJECT_DIR / "resume.yaml")
 DOCKER_IMAGE = "texlive/texlive:latest"
 
 @dataclass
@@ -145,7 +147,7 @@ def make_tex(template_path: Path, output_dir: Path, resume: Resume) -> Path:
         loader=jinja2.FileSystemLoader(Path.cwd()),
     )
 
-    template = latex_jinja_env.get_template(str(template_path))
+    template = latex_jinja_env.get_template(str(template_path.relative_to(Path.cwd())))
     rendered_tex = template.render(asdict(resume))
 
     with open(output_path, "w") as f:
@@ -236,6 +238,8 @@ def compile_tex(tex_path: Path, output_dir: Path, docker: bool = True) -> None:
         print(colored("Error compiling LaTeX:", "red"))
         print(result.stderr)
         print(result.stdout)
+    else:
+        print(colored(f"LaTeX compiled successfully to: {(output_dir / tex_path.stem).absolute()}.pdf", "green"))
 
 
 def prase_cli_args() -> argparse.Namespace:
@@ -243,7 +247,21 @@ def prase_cli_args() -> argparse.Namespace:
         description="Generate a resume from a template and data file."
     )
 
-    parser.add_argument("template", type=Path, help="Path to the LaTeX template file.")
+    parser.add_argument(
+        "-t",
+        "--template", 
+        type=Path, 
+        default=DEFAULT_TEMPLATE,
+        help=f"Path to the LaTeX-Jinja template file (Default is {DEFAULT_TEMPLATE})"
+    )
+
+    parser.add_argument(
+        "-r",
+        "--resume",
+        type=Path,
+        default=DEFAULT_RESUME,
+        help=f"Path to the YAML file containing resume data (Default is {DEFAULT_RESUME})",
+    )
 
     parser.add_argument(
         "-o",
@@ -253,13 +271,22 @@ def prase_cli_args() -> argparse.Namespace:
         help="Path to build directory where the output will be saved (Default is 'build/')",
     )
 
+    parser.add_argument(
+        "--native",
+        action="store_true",
+        help="Compile LaTeX natively without Docker (Requires local LaTeX installation)",
+    )
+
     return parser.parse_args()
 
 
 def main() -> None:
     args = prase_cli_args()
     args.output.mkdir(parents=True, exist_ok=True)
-    resume = load_resume_from_yaml(PROJECT_DIR / "resume.yaml")
+    print(colored(f"Using template: {args.template}", "green"))
+    print(colored(f"Using resume data: {args.resume}", "green"))
+    print(colored(f"Output directory: {args.output}", "green"))
+    resume = load_resume_from_yaml(args.resume)
     tex_path = make_tex(args.template, args.output, resume)
     compile_tex(tex_path, args.output)
 
