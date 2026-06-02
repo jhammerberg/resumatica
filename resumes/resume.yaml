@@ -1,11 +1,10 @@
 first_name: "Jack"
 last_name: "Hammerberg"
 contact_info:
-  - "jackmh@umich.edu"
+  - "[jackmh@umich.edu](mailto:jackmh@umich.edu)"
   - "(517)-960-1210"
-  - "linkedin.com/in/jackmh"
+  - "[github.com/jhammerberg](https://github.com/jhammerberg)"
   - "US Citizen"
-  - "github.com/jhammerberg"
 education:
   - school: "University of Michigan"
     location: "Ann Arbor, MI"

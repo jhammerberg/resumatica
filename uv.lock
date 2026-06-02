@@ -103,7 +103,7 @@ wheels = [
 ]
 
 [[package]]
-name = "resumate"
+name = "resumatica"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [

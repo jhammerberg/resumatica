@@ -18,7 +18,7 @@ import re
 
 PROJECT_DIR = Path(__file__).parent
 DEFAULT_TEMPLATE = (PROJECT_DIR / "templates" / "classic.jinja")
-DEFAULT_RESUME = (PROJECT_DIR / "resume.yaml")
+DEFAULT_RESUME = (PROJECT_DIR / "resumes" / "resume.yaml")
 DOCKER_IMAGE = "texlive/texlive:latest"
 
 @dataclass
@@ -54,6 +54,17 @@ class Resume:
     project_experience: list[Experience]
     skills: dict[str, list[str]]
 
+_MARKDOWN_URL_RE = re.compile(r'^\[([^\]]*)\]\(([^)]+)\)$')
+
+def markdown_url_to_latex(text: str) -> str | None:
+    match = _MARKDOWN_URL_RE.match(text.strip())
+    if not match:
+        return None
+    label, url = match.group(1), match.group(2)
+    if url.startswith('mailto:'):
+        return rf'\href{{{url}}}{{{escape_latex(label)}}}'
+    return rf'\url{{{url}}}'
+
 def escape_latex(text: str) -> str:
     """Escapes reserved LaTeX characters in a string."""
     if not isinstance(text, str):
@@ -79,6 +90,8 @@ def escape_latex(text: str) -> str:
 def escape_latex_recursive(data):
     """Recursively traverses dictionaries and lists to escape LaTeX characters in strings."""
     if isinstance(data, str):
+        if latex_url := markdown_url_to_latex(data):
+            return latex_url
         return escape_latex(data)
     elif isinstance(data, list):
         return [escape_latex_recursive(item) for item in data]
@@ -210,30 +223,43 @@ def compile_tex(tex_path: Path, output_dir: Path, docker: bool = True) -> None:
         with yaspin(
             text=colored("Compiling LaTeX with Docker...", "yellow"), color="yellow"
         ) as compile_spinner:
+            cmd = [
+                "docker",
+                "run",
+                "--rm",
+                "-v",
+                f"{PROJECT_DIR}:/workdir:z",
+                DOCKER_IMAGE,
+                "xelatex",
+                "-output-directory",
+                Path("/workdir") / output_dir,
+                (output_dir / tex_path.name),
+            ]
+            for _ in range(2):
+                result = subprocess.run(
+                    cmd,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    text=True,
+                )
+                if result.returncode != 0:
+                    break
+    else:
+        cmd = [
+            "pdflatex",
+            "-output-directory",
+            str(output_dir),
+            str(tex_path),
+        ]
+        for _ in range(2):
             result = subprocess.run(
-                [
-                    "docker",
-                    "run",
-                    "--rm",
-                    "-v",
-                    f"{PROJECT_DIR}:/workdir:z",
-                    DOCKER_IMAGE,
-                    "xelatex",
-                    "-output-directory",
-                    Path("/workdir") / output_dir,
-                    (output_dir / tex_path.name),
-                ],
+                cmd,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 text=True,
             )
-    else:
-        result = subprocess.run(
-            ["pdflatex", "-output-directory", str(output_dir), str(tex_path)],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
-        )
+            if result.returncode != 0:
+                break
     if result.returncode != 0:
         print(colored("Error compiling LaTeX:", "red"))
         print(result.stderr)

@@ -1,0 +1,7 @@
+{
+  "languages": {
+    "YAML": {
+      "enable_language_server": false
+    }
+  }
+}

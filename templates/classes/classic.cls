@@ -5,12 +5,11 @@
 
 \RequirePackage{latexsym}
 \RequirePackage[empty]{fullpage}
-\RequirePackage{titlesec}
+\RequirePackage[explicit]{titlesec}
 \RequirePackage{marvosym}
 \RequirePackage[usenames,dvipsnames]{color}
 \RequirePackage{verbatim}
 \RequirePackage{enumitem}
-\RequirePackage[hidelinks]{hyperref}
 \RequirePackage{fancyhdr}
 \RequirePackage[english]{babel}
 \RequirePackage{tabularx}
@@ -51,16 +50,45 @@
 \addtolength{\topmargin}{-0.0in}
 \addtolength{\textheight}{0.0in}
 
-\urlstyle{same}
+\RequirePackage[normalem]{ulem}
+\RequirePackage[
+  unicode,
+  pdfencoding=auto,
+  colorlinks=true,
+  urlcolor=blue,
+  linkcolor=blue,
+]{hyperref}
+\RequirePackage{bookmark}
+
+\newcommand{\classic@linkuline}[1]{{\color{blue}\uline{#1}}}
+
+\pdfstringdefDisableCommands{%
+  \let\classic@linkuline\@firstofone
+  \let\uline\@firstofone
+  \let\color\@firstofone
+}
+
+\AtBeginDocument{%
+  \urlstyle{same}%
+  \let\classic@url\url
+  \renewcommand{\url}[1]{\classic@linkuline{\classic@url{#1}}}%
+  \let\classic@href\href
+  \renewcommand{\href}[2]{\classic@href{#1}{\classic@linkuline{#2}}}%
+}
 
 \raggedbottom
 \raggedright
 \setlength{\tabcolsep}{0in}
 
+\setlength{\fboxrule}{1.25pt}
+
 % Sections formatting
-\titleformat{\section}{
-  \vspace{-4pt}\titlefont\bfseries\raggedright\large
-}{}{0em}{}[\color{black}\titlerule \vspace{-5pt}]
+\titleformat{\section}
+  {\vspace{-4pt}\titlefont\bfseries\raggedright\large}
+  {}
+  {0em}
+  {\fbox{\textbf{#1}}} % The #1 represents the section title text
+  [\vspace{-1.1pt} \color{black}{\titlerule[1.25pt]} \vspace{-5pt}]
 
 % Custom commands
 \newcommand{\resumeItem}[1]{

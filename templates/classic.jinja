@@ -5,9 +5,8 @@
 \begin{center}
     {\titlefont\Huge\bfseries \VAR{first_name} \VAR{last_name}} \\ \vspace{5pt}
     \BLOCK{ if contact_info is iterable }
-        \small 
         \BLOCK{ for item in contact_info }
-            \VAR{item}
+            \titlefont \small \VAR{item}
             \BLOCK{ if not loop.last }
                 $\bullet$
             \BLOCK{ endif }
@@ -67,7 +66,7 @@
                             \resumeItemListEnd
                         \BLOCK{ endif }
                         \BLOCK{ if not loop.last }
-                            \vspace{5pt}
+                            \vspace{-6pt}
                         \BLOCK{ endif }
                 \BLOCK{ endfor }
         \BLOCK{ endfor }
@@ -83,5 +82,5 @@
             \BLOCK{ endfor }
         }}
     \end{itemize}
-    
+
 \end{document}
