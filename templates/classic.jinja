@@ -35,8 +35,13 @@
                     {\VAR{position.title}}{\VAR{position.start_date}\ - \VAR{position.end_date}}
                     \BLOCK{ if position.bullets }
                         \resumeItemListStart
-                        \BLOCK{ for bullet in position.bullets }
-                            \resumeItem{\VAR{bullet}}
+                        \BLOCK{ for bullet in position.bullets recursive }
+                            \resumeItem{\VAR{bullet.text}}
+                            \BLOCK{ if bullet.sub_bullets }
+                                \resumeSubItemListStart
+                                \VAR{ loop(bullet.sub_bullets) }
+                                \resumeSubItemListEnd
+                            \BLOCK{ endif }
                         \BLOCK{ endfor }
                         \resumeItemListEnd
                     \BLOCK{ endif }
@@ -60,8 +65,13 @@
                         {\VAR{position.title}}{\VAR{position.start_date}\ - \VAR{position.end_date}}
                         \BLOCK{ if position.bullets }
                             \resumeItemListStart
-                            \BLOCK{ for bullet in position.bullets }
-                                \resumeItem{\VAR{bullet}}
+                            \BLOCK{ for bullet in position.bullets recursive }
+                                \resumeItem{\VAR{bullet.text}}
+                                \BLOCK{ if bullet.sub_bullets }
+                                    \resumeSubItemListStart
+                                    \VAR{ loop(bullet.sub_bullets) }
+                                    \resumeSubItemListEnd
+                                \BLOCK{ endif }
                             \BLOCK{ endfor }
                             \resumeItemListEnd
                         \BLOCK{ endif }

@@ -31,11 +31,16 @@ class Education:
     end_date: str
 
 @dataclass
+class Bullet:
+    text: str
+    sub_bullets: list["Bullet"]
+
+@dataclass
 class Position:
     title: str
     start_date: str
     end_date: str
-    bullets: list[str]    
+    bullets: list[Bullet]    
 
 @dataclass
 class Experience:
@@ -87,22 +92,79 @@ def escape_latex(text: str) -> str:
     regex = re.compile('|'.join(re.escape(key) for key in latex_replacements.keys()))
     return regex.sub(lambda match: latex_replacements[match.group(0)], text)
 
+_MARKDOWN_BOLD_RE = re.compile(r'\*\*(.+?)\*\*|\*(.+?)\*')
+
+def markdown_bold_to_latex(text: str) -> str:
+    """Converts markdown-style `**bold**` and `*bold*` spans to LaTeX \\textbf{}."""
+    return _MARKDOWN_BOLD_RE.sub(
+        lambda m: rf'\textbf{{{m.group(1) or m.group(2)}}}', text
+    )
+
 def escape_latex_recursive(data):
     """Recursively traverses dictionaries and lists to escape LaTeX characters in strings."""
     if isinstance(data, str):
         if latex_url := markdown_url_to_latex(data):
             return latex_url
-        return escape_latex(data)
+        return markdown_bold_to_latex(escape_latex(data))
     elif isinstance(data, list):
         return [escape_latex_recursive(item) for item in data]
     elif isinstance(data, dict):
         return {key: escape_latex_recursive(value) for key, value in data.items()}
     return data
 
+def normalize_bullet(raw) -> dict:
+    """Converts a raw YAML bullet into a {"text": str, "sub_bullets": [...]} dict.
+
+    A bullet is either a plain string, or a single-key mapping whose key is the
+    bullet text and whose value is a list of nested bullets:
+
+        bullets:
+          - "Plain bullet"
+          - "Parent bullet":
+              - "Sub bullet"
+    """
+    if isinstance(raw, str):
+        return {"text": raw, "sub_bullets": []}
+    if isinstance(raw, dict) and len(raw) == 1:
+        [(text, sub_bullets)] = raw.items()
+        if sub_bullets is None:
+            sub_bullets = []
+        if not isinstance(text, str) or not isinstance(sub_bullets, list):
+            raise ValueError(f"Invalid nested bullet: {raw!r}")
+        return {"text": text, "sub_bullets": [normalize_bullet(b) for b in sub_bullets]}
+    raise ValueError(
+        f"Invalid bullet: {raw!r}. Expected a string or a single-key mapping of text to sub-bullets."
+    )
+
+def normalize_bullets(data: dict) -> None:
+    """Rewrites every position's bullets in-place into the normalized dict form."""
+    for section in ("work_experience", "project_experience"):
+        for exp in data.get(section, []) or []:
+            for pos in exp.get("positions", []) or []:
+                pos["bullets"] = [normalize_bullet(b) for b in (pos.get("bullets") or [])]
+
+def build_bullet(data: dict) -> Bullet:
+    return Bullet(
+        text=data["text"],
+        sub_bullets=[build_bullet(b) for b in data["sub_bullets"]],
+    )
+
+def build_position(data: dict) -> Position:
+    return Position(
+        title=data["title"],
+        start_date=data["start_date"],
+        end_date=data["end_date"],
+        bullets=[build_bullet(b) for b in data.get("bullets", [])],
+    )
+
 def load_resume_from_yaml(file_path: Path) -> Resume:
     with open(file_path, 'r', encoding='utf-8') as file:
         data = yaml.safe_load(file)
-        
+
+    # Normalize bullets first so parent-bullet text (stored as a YAML mapping
+    # key) becomes a regular string value that the escape pass will process.
+    normalize_bullets(data)
+
     # Recursively escape all strings in the parsed YAML dictionary
     data = escape_latex_recursive(data)
         
@@ -114,7 +176,7 @@ def load_resume_from_yaml(file_path: Path) -> Resume:
     # Process Work Experience
     work_objects = []
     for exp in data.get('work_experience', []):
-        positions = [Position(**pos) for pos in exp.get('positions', [])]
+        positions = [build_position(pos) for pos in exp.get('positions', [])]
         work_objects.append(Experience(
             company=exp['company'],
             location=exp['location'],
@@ -124,7 +186,7 @@ def load_resume_from_yaml(file_path: Path) -> Resume:
     # Process Project Experience
     project_objects = []
     for exp in data.get('project_experience', []):
-        positions = [Position(**pos) for pos in exp.get('positions', [])]
+        positions = [build_position(pos) for pos in exp.get('positions', [])]
         project_objects.append(Experience(
             company=exp['company'],
             location=exp['location'],

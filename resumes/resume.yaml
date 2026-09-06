@@ -16,10 +16,14 @@ work_experience:
   - company: "Rocket Lab"
     location: "Long Beach, CA"
     positions:
-      - title: "Incoming Flight Software Intern"
+      - title: "Flight Software Intern"
         start_date: "February 2026"
         end_date: "August 2026"
-        bullets: []
+        bullets:
+          - "building":
+            - "sub-bullet"
+          - "non-sub-bullet"
+
   - company: "NASA Jet Propulsion Laboratory"
     location: "Pasadena, CA"
     positions:
@@ -53,10 +57,11 @@ project_experience:
 skills:
   Software:
     - "Embedded Firmware"
+    - "Embedded Linux"
+    - "Yocto"
     - "FreeRTOS"
     - "Zephyr"
     - "STM32"
-    - "MAX"
     - "Communication Buses"
     - "3D CAD"
     - "Linux Programming"
@@ -66,15 +71,18 @@ skills:
     - "C"
     - "C++"
     - "Python"
-    - "Go/Golang"
+    - "Rust"
+    - "Go"
     - "JavaScript"
     - "HTML"
     - "CSS"
     - "Lua"
   Hardware:
     - "Microcontrollers"
+    - "Ethernet"
     - "I2C & SPI"
     - "Circuit Prototyping"
+    - "National Instruments"
     - "Oscilloscope"
     - "Logic Analyzer"
     - "Multimeter"

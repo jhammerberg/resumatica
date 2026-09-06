@@ -117,8 +117,13 @@
 \newcommand{\resumeSubItem}[1]{\resumeItem{#1}\vspace{-4pt}}
 
 \renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+\renewcommand\labelitemiii{$\vcenter{\hbox{\tiny$\circ$}}$}
+\renewcommand\labelitemiv{$\vcenter{\hbox{\tiny$\bullet$}}$}
 
 \newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}]}
 \newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
 \newcommand{\resumeItemListStart}{\begin{itemize}}
 \newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
+% Nested (sub-bullet) lists inside a \resumeItem
+\newcommand{\resumeSubItemListStart}{\begin{itemize}[topsep=0pt, leftmargin=0.15in]}
+\newcommand{\resumeSubItemListEnd}{\end{itemize}}
