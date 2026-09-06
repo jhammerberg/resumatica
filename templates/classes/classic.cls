@@ -27,6 +27,14 @@
     BoldItalicFont = Roboto-BoldItalic.ttf
 ]
 
+% Body font for bullet text, with a lighter "medium" bold instead of full Bold
+\newfontfamily{\bulletfont}{Roboto-Light.ttf}[
+    Path = ./templates/fonts/Roboto/,
+    BoldFont = Roboto-Medium.ttf,
+    ItalicFont = Roboto-Italic.ttf,
+    BoldItalicFont = Roboto-MediumItalic.ttf
+]
+
 % Define a custom command to call JetBrains Mono for titles
 \newfontfamily{\titlefont}{JetBrainsMono-Regular.ttf}[
     Path = ./templates/fonts/JetBrainsMono/,
@@ -93,7 +101,7 @@
 % Custom commands
 \newcommand{\resumeItem}[1]{
   \item\small{
-    {#1 \vspace{-2pt}}
+    {\bulletfont #1 \vspace{-2pt}}
   }
 }
 

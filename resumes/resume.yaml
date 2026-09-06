@@ -13,17 +13,22 @@ education:
     start_date: "August 2023"
     end_date: "December 2027"
 work_experience:
-  - company: "Rocket Lab"
+  - company: "Rocket Lab USA"
     location: "Long Beach, CA"
     positions:
       - title: "Flight Software Intern"
         start_date: "February 2026"
         end_date: "August 2026"
         bullets:
-          - "building":
-            - "sub-bullet"
-          - "non-sub-bullet"
-
+          - "Owned the early development of the Yocto-based embedded Linux distribution for next-generation flight computer.":
+            - "Patched in NXP secure boot and SELinux support for mission security requirements."
+            - "Upgraded the vendor provided Yocto layer from Linux 5.5 to Linux 6.1."
+            - "Added Raspberry Pi 4 machine compatibility to demo flight software capabilities."
+            - "Created a custom QEMU emulation of the flight computer for quick local testing."
+          - "Built an extensive GitLab-based CI/CD pipeline, automating Yocto builds, image flashing, serial communication, QEMU tests, and hardware-in-the-loop (HITL) validation."
+          - "Cut ARM Cortex A72-based processor power consumption by 15% at idle and 57% under load"
+          - "Resolved ~816 static analysis warnings, debugged issues relating to star-tracker image capture, and built a reusable GPIO telemetry component for active and upcoming missions."
+          - "Create a tool using Python, XML, Jinja, and LaTeX to automatically create high-quality ICDs based on software configuration files for systems engineers to reference and check."
   - company: "NASA Jet Propulsion Laboratory"
     location: "Pasadena, CA"
     positions:
@@ -40,20 +45,14 @@ project_experience:
   - company: "Michigan Aeronautical Science Association (MASA)"
     location: "Ann Arbor, MI"
     positions:
-      - title: "Flight Software & Avionics Firmware Lead"
+      - title: "Avionics Subteam Director & Firmware Lead"
         start_date: "August 2023"
         end_date: "January 2026"
         bullets:
+          - "Responsible engineer (RE) for our vehicle's modular avionics stack made of entirely custom PCBs and software for 50Hz live telemetry from 250+ analog and DIO channels over 100Base-T Ethernet."
+          - "Author of our automated control sequence for the launch of our rocket, controlling over 25 different components simultaneously and handling multiple changing abort procedures, verified prior to launch with custom simulations."
           - "Wrote custom device drivers for reading IMUs, ADCs, barometers, pressure transducers, and thermocouples as well as multi-mode valve control using SPI, I2C, and the STM32 HAL API in C."
           - "Implemented a custom telemetry and command packet encoding scheme over Ethernet using LWIP on STM microcontrollers, optimized for efficiency and overhead."
-          - "Author of our automated control sequence for the launch of our rocket, controlling over 25 different components simultaneously and handling multiple changing abort procedures, verified prior to launch with custom simulations."
-      - title: "Avionics Subteam Director"
-        start_date: "August 2023"
-        end_date: "May 2025"
-        bullets:
-          - "Responsible engineer (RE) for our vehicle's modular avionics stack made of entirely custom PCBs and software for 50Hz live telemetry from 250+ analog and DIO channels over 100Base-T Ethernet."
-          - "Created training and onboarding documentation for 20+ new members while collaborating with the Chief and Systems Engineers to establish project timelines, deadlines, and deliverables."
-          - "Provided support for ground equipment and flight hardware for every major testing campaign, including live debugging of National Instruments DAQ hardware during our latest successful hotfire."
 skills:
   Software:
     - "Embedded Firmware"

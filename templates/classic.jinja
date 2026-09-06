@@ -87,7 +87,7 @@
      \begin{itemize}[leftmargin=0.15in, label={}]
         \small{\item{
             \BLOCK{ for category, skills in skills.items() }
-                \textbf{\VAR{category}}{: \BLOCK{ for skill in skills } \VAR{skill}, \BLOCK{ endfor } } \\
+                \textbf{\VAR{category}}{: \BLOCK{ for skill in skills } \VAR{skill}\BLOCK{ if not loop.last },\BLOCK{ endif } \BLOCK{ endfor } } \\
                 \vspace{2pt}
             \BLOCK{ endfor }
         }}
