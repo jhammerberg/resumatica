@@ -28,7 +28,7 @@ work_experience:
           - "Built an extensive GitLab-based CI/CD pipeline, automating Yocto builds, image flashing, serial communication, QEMU tests, and hardware-in-the-loop (HITL) validation."
           - "Cut ARM Cortex A72-based processor power consumption by 15% at idle and 57% under load"
           - "Resolved ~816 static analysis warnings, debugged issues relating to star-tracker image capture, and built a reusable GPIO telemetry component for active and upcoming missions."
-          - "Create a tool using Python, XML, Jinja, and LaTeX to automatically create high-quality ICDs based on software configuration files for systems engineers to reference and check."
+          - "Created a tool using Python, XML, Jinja, and LaTeX to automatically create high-quality ICDs based on software configuration files for systems engineers to reference and check."
   - company: "NASA Jet Propulsion Laboratory"
     location: "Pasadena, CA"
     positions:
